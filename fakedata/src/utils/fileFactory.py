@@ -5,18 +5,24 @@ import csv
 class FileFactory:
 
     def open_file(self, file_name):
-        return open(os.path.join(os.path.expanduser("~"), "Documents\\" + file_name + " "), 'w', newline='')
+        dir_name = os.path.join(os.path.expanduser('~'), 'Documents/fc_project_data/')
+
+        path_to_file = os.path.join(dir_name + file_name)
+
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+
+        return open(path_to_file, 'w', newline='')
+
+    def writer(self, file):
+        return csv.writer(file)
 
     def write_file_headers(self, file, file_headers):
-        writer = csv.writer(file)
+        writer = self.writer(file)
         writer.writerow(file_headers)
         return writer
 
-    def close_all(self, networkDiscovery_file, equipment_on_site_file, equipment_file, account_file, customer_file, service_file):
+    def close_file(self, *argv):
+        for file in argv:
+            file.close()
 
-        networkDiscovery_file.close()
-        equipment_on_site_file.close()
-        equipment_file.close()
-        account_file.close()
-        customer_file.close()
-        service_file.close()

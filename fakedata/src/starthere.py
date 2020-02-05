@@ -7,7 +7,7 @@ rn = random_generator.RandomCustom()
 # The seed for the random generator
 rn.random_seed(2)
 # The number of networks that are wanted in the output
-numberOfNetworks = 2
+numberOfNetworks = 1
 start.file_generator_iterations(numberOfNetworks)
 # those network can have address_class of type b, or c as
 # type a take too long to fulfill. (Please see comments on
