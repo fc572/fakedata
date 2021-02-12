@@ -1,5 +1,4 @@
 from faker import Faker
-
 import time
 from customproviders.serviceTag import TagsProvider
 from customproviders.serviceBandwith import BandwithProvider
@@ -61,7 +60,8 @@ class FileGeneration:
         equipment_on_site_writer = ff.write_file_headers(equipment_on_site_file, equipment_on_site_headers)
 
         # network discovery file
-        networkDiscovery_file = ff.open_file("networkDiscoveryFile.txt")
+        networkDiscovery_file = ff.open_file("networkDiscoveryFile.rdf")
+        networkDiscovery_file.write(ndf.networkdiscoveryentries())
 
         dataObj1 = ""
 
@@ -77,9 +77,9 @@ class FileGeneration:
 
             flag = True
             while flag:
-                ip_address_with_mask = fake.ipv4_public(network=True, address_class=rn.random_b_or_c())
+                ip_address_with_mask = fake.ipv4_public(network=True, address_class=fake.ipv4_network_class())
                 ip_addresses = subnet.generate_ip_addresses_for_fake_network(ip_address_with_mask)
-                if len(ip_addresses) < 500:
+                if len(ip_addresses) < 1250:
                     flag = False
 
             subnet_mask = subnet.get_subnet_mask_from_ip(ip_address_with_mask)
