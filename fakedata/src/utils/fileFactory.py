@@ -12,7 +12,7 @@ class FileFactory:
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
 
-        return open(path_to_file, 'w', newline='')
+        return open(path_to_file, 'a', newline='')
 
     def writer(self, file):
         return csv.writer(file)

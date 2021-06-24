@@ -23,7 +23,8 @@ class FileGeneration:
         fake.add_provider(CustomValues)
         fake.add_provider(DocumentNumbers)
 
-        customer_headers = ["ServiceID", "ServiceName", "CustomerName", "CustomerAccount", "SiteName", "SiteAddress", "playsGuitar"]
+        customer_headers = ["ServiceID", "ServiceName", "CustomerName", "CustomerAccount", "SiteName", "SiteAddress",
+                            "playsGuitar"]
         service_headers = ["ServiceTag", "ServiceBandwidth", "InterfaceIpAddress", "EquipmentSerial", "EquipmentModel",
                            "SiteName", "SiteAddress"]
         account_headers = ["Account Name", "Bill Number", "Payment Method", "Bill Date", "Bill Cycle",
@@ -60,8 +61,8 @@ class FileGeneration:
         equipment_on_site_writer = ff.write_file_headers(equipment_on_site_file, equipment_on_site_headers)
 
         # network discovery file
-        networkDiscovery_file = ff.open_file("networkDiscoveryFile.rdf")
-        networkDiscovery_file.write(ndf.networkdiscoveryentries())
+        network_discovery_file = ff.open_file("networkDiscoveryFile.rdf")
+        network_discovery_file.write(ndf.networkdiscoveryentries())
 
         dataObj1 = ""
 
@@ -70,7 +71,7 @@ class FileGeneration:
         ff.close_file(equipment_file)
 
         for _i in range(number_of_networks):
-            print("Value of _i in range ", _i)
+            print("Printing network number ", _i, " of ", number_of_networks)
 
             # address_class is of type b or c because type a takes too long.
             # change to address_class=fake.ipv4_network_class() to have options a,b or c available
@@ -79,7 +80,7 @@ class FileGeneration:
             while flag:
                 ip_address_with_mask = fake.ipv4_public(network=True, address_class=fake.ipv4_network_class())
                 ip_addresses = subnet.generate_ip_addresses_for_fake_network(ip_address_with_mask)
-                if len(ip_addresses) < 1250:
+                if len(ip_addresses) < 1000:
                     flag = False
 
             subnet_mask = subnet.get_subnet_mask_from_ip(ip_address_with_mask)
@@ -128,15 +129,19 @@ class FileGeneration:
                     [equipment_on_site_obj_id, equipment_name, equipment_manufacturer_id, ip_address, subnet_mask,
                      m_subnet, local_nbr_phys_addr, rn.random_range(0, 1), bandwidth, 1]
                 )
+                equipment_on_site_file.flush()
+
                 equipment_on_site_obj_id += 1
                 service_writer.writerow(
                     [fake.tag(service_id), bandwidth, ip_address, fake.serial_number(), equipment_name, site_name,
                      site_address]
                 )
+                service_file.flush()
 
                 customer_writer.writerow(
                     [service_id, fake.custom_list("fake_service_name", 1), customer_name, customer_account_number,
                      site_name, site_address, plays_guitar])
+                customer_file.flush()
 
                 account_writer.writerow(
                     [customer_name, rn.random_number(2), fake.custom_list("fake_payment_method", 1),
@@ -144,14 +149,17 @@ class FileGeneration:
                      line_rental,
                      bill_total, service_code, fake.custom_list("fake_product_code", 1)]
                 )
+                account_file.flush()
 
                 timestamp = (str(int(time.time())))
-                networkDiscovery_file.write(ndf.networkdiscoveryobj2(name, str(object2_id), str(assoc_index_number),
-                                                     str(if_admin_status),
-                                                     str(if_oper_status), str(if_index), entity_oid, ip_address,
-                                                     timestamp,
-                                                     subnet_mask, m_subnet, local_nbr_phys_addr) + "\n")
-
+                network_discovery_file.write(ndf.networkdiscoveryobj2(name, str(object2_id), str(assoc_index_number),
+                                                                      str(if_admin_status),
+                                                                      str(if_oper_status), str(if_index), entity_oid,
+                                                                      ip_address,
+                                                                      timestamp,
+                                                                      subnet_mask, m_subnet,
+                                                                      local_nbr_phys_addr) + "\n")
+                network_discovery_file.flush()
                 assoc_index_number_for_obj1.append(assoc_index_number)
                 if_oper_status_for_obj1.append(if_oper_status)
                 if_index_for_obj1.append(if_index)
@@ -162,10 +170,12 @@ class FileGeneration:
 
             timestamp = str(int(time.time()))
             # print("...still working..." + timestamp)
-            dataObj1 += ndf.networddiscoveryobj1(object_1_id, name, str(assoc_index_number_for_obj1),
-                                                 str(if_oper_status_for_obj1), str(if_index_for_obj1), str(if_number),
-                                                 timestamp, entity_oid)
+            network_discovery_file.write(ndf.networddiscoveryobj1(object_1_id, name, str(assoc_index_number_for_obj1),
+                                                                  str(if_oper_status_for_obj1), str(if_index_for_obj1),
+                                                                  str(if_number),
+                                                                  timestamp, entity_oid) + "\n")
 
-            networkDiscovery_file.write(dataObj1 + "\n")
+            # network_discovery_file.write(dataObj1 + "\n")
+            network_discovery_file.flush()
 
-        ff.close_file(networkDiscovery_file, equipment_on_site_file, account_file, customer_file, service_file)
+        ff.close_file(network_discovery_file, equipment_on_site_file, account_file, customer_file, service_file)
