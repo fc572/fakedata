@@ -71,7 +71,7 @@ class FileGeneration:
         ff.close_file(equipment_file)
 
         for _i in range(number_of_networks):
-            print("Printing network number ", _i, " of ", number_of_networks)
+            print("Printing network number ", (_i + 1), " of ", number_of_networks)
 
             # address_class is of type b or c because type a takes too long.
             # change to address_class=fake.ipv4_network_class() to have options a,b or c available
