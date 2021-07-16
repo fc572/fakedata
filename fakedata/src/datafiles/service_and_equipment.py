@@ -155,10 +155,9 @@ class FileGeneration:
                 network_discovery_file.write(ndf.networkdiscoveryobj2(name, str(object2_id), str(assoc_index_number),
                                                                       str(if_admin_status),
                                                                       str(if_oper_status), str(if_index), entity_oid,
-                                                                      ip_address,
-                                                                      timestamp,
-                                                                      subnet_mask, m_subnet,
+                                                                      ip_address, subnet_mask, m_subnet,
                                                                       local_nbr_phys_addr) + "\n")
+
                 network_discovery_file.flush()
                 assoc_index_number_for_obj1.append(assoc_index_number)
                 if_oper_status_for_obj1.append(if_oper_status)
@@ -172,8 +171,7 @@ class FileGeneration:
             # print("...still working..." + timestamp)
             network_discovery_file.write(ndf.networddiscoveryobj1(object_1_id, name, str(assoc_index_number_for_obj1),
                                                                   str(if_oper_status_for_obj1), str(if_index_for_obj1),
-                                                                  str(if_number),
-                                                                  timestamp, entity_oid) + "\n")
+                                                                  entity_oid) + "\n")
 
             # network_discovery_file.write(dataObj1 + "\n")
             network_discovery_file.flush()
