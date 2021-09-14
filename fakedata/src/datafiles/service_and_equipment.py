@@ -80,6 +80,7 @@ class FileGeneration:
             while flag:
                 ip_address_with_mask = fake.ipv4_public(network=True, address_class=fake.ipv4_network_class())
                 ip_addresses = subnet.generate_ip_addresses_for_fake_network(ip_address_with_mask)
+                # make sure that there are less than 1000 ips in the network
                 if len(ip_addresses) < 1000:
                     flag = False
 
