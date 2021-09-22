@@ -1,10 +1,11 @@
-
 class IpAddressUtilities:
 
-    def get_simple_ip(self, ip_address_with_subnet_mask):
+    @staticmethod
+    def get_ip_address_without_mask(ip_address_with_subnet_mask):
         return ip_address_with_subnet_mask[:-3]
 
-    def get_subnet_mask_from_ip(self, ip_address_with_subnet_mask):
+    @staticmethod
+    def get_subnet_mask_from_ip(ip_address_with_subnet_mask):
         suffix = ip_address_with_subnet_mask[-2:]
         if suffix[0] == "/":
             return suffix[1]
@@ -26,7 +27,8 @@ class IpAddressUtilities:
             bin_mask += '0'
         return bin_mask
 
-    def binary_value_to_decimal(self, bin_value):
+    @staticmethod
+    def binary_value_to_decimal(bin_value):
         octets = bin_value.split('.')
         subnet_mask_decimal = ""
         for octet in octets:
@@ -35,7 +37,7 @@ class IpAddressUtilities:
         return subnet_mask_decimal[:-1]
 
     def ip_to_binary(self, ip_address_with_subnet_mask):
-        ip_address = self.get_simple_ip(ip_address_with_subnet_mask)
+        ip_address = self.get_ip_address_without_mask(ip_address_with_subnet_mask)
         ip_octets = ip_address.split('.')
         ip_in_binary = ""
 
@@ -50,7 +52,8 @@ class IpAddressUtilities:
             ip_in_binary = ip_in_binary + binary + '.'
         return ip_in_binary[:-1]
 
-    def calculate_network_address(self, ip_address_in_binary, subnet_mask_binary):
+    @staticmethod
+    def calculate_network_address(ip_address_in_binary, subnet_mask_binary):
         network_address = ""
         for pos in range(0, 35):
             if ip_address_in_binary[pos] == '.':
@@ -66,23 +69,28 @@ class IpAddressUtilities:
         int_mask = int(mask)
         host_part = ''
 
+        host_part = self.calculate_the_host_part_of_the_address_in_binary(host_part, int_mask)
+
+        if int_mask < 9:
+            network_address = ip_bin[:int_mask]
+        elif int_mask < 17:
+            network_address = ip_bin[:(int_mask + 1)]  # one dots
+        elif int_mask < 25:
+            network_address = ip_bin[:(int_mask + 2)]  # two dots
+        else:
+            network_address = ip_bin[:(int_mask + 3)]  # three dots
+
+        broadcast_address = network_address + host_part
+        # broadcast_address_decimal = self.binary_value_to_decimal(broadcast_address)
+        return broadcast_address
+
+    @staticmethod
+    def calculate_the_host_part_of_the_address_in_binary(host_part, int_mask):
         for i in range(int_mask, 32):
             if i % 8 == 0:
                 host_part += '.'
             host_part += '1'
-
-        if int_mask < 9:
-            network_addr = ip_bin[:int_mask]
-        elif int_mask < 17:
-            network_addr = ip_bin[:(int_mask + 1)] #one dots
-        elif int_mask < 25:
-            network_addr = ip_bin[:(int_mask + 2)] #two dots
-        else:
-            network_addr = ip_bin[:(int_mask + 3)] #three dots
-
-        broadcast_address = network_addr + host_part
-        broadcast_address_devimal = self.binary_value_to_decimal(broadcast_address)
-        return broadcast_address
+        return host_part
 
     def max_number_of_hosts(self, ip_address_with_subnet_mask):
         mask = self.get_subnet_mask_from_ip(ip_address_with_subnet_mask)
@@ -108,11 +116,11 @@ class IpAddressUtilities:
         start_ip_octets = []
         end_ip_octets = []
 
-        for s_octects in strings_start_ip_octets:
-            start_ip_octets.append(int(s_octects))
+        for first_octets in strings_start_ip_octets:
+            start_ip_octets.append(int(first_octets))
 
-        for l_octects in strings_end_ip_octets:
-            end_ip_octets.append(int(l_octects))
+        for last_octets in strings_end_ip_octets:
+            end_ip_octets.append(int(last_octets))
 
         def oct4(start4_ip_octets, end4_ip_octets, first_term=start_ip_octets[0], second_term=start_ip_octets[1],
                  third_term=start_ip_octets[2]):
@@ -154,5 +162,6 @@ class IpAddressUtilities:
 
         return addresses
 
-    def form_ip_addresses(self, addresses, n1, n2, n3, n4):
+    @staticmethod
+    def form_ip_addresses(addresses, n1, n2, n3, n4):
         return addresses.append(str(n1) + '.' + str(n2) + '.' + str(n3) + '.' + str(n4))

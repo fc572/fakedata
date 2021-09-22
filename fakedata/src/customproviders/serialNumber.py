@@ -1,12 +1,13 @@
 import random
 
 from faker.providers import BaseProvider
-from utils import random_generator
+from src.my_project_utils import random_generator
 
 
 # Our custom provider inherits from the BaseProvider
 class SerialNumbers(BaseProvider):
-    def serial_number(self):
+    @staticmethod
+    def serial_number():
         rn = random_generator.RandomCustom()
         rl = random_generator.RandomCustom()
         if random.randint(1, 10) % 2 == 0:

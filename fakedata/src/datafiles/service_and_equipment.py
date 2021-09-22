@@ -1,24 +1,25 @@
 from faker import Faker
-import time
-from customproviders.serviceTag import TagsProvider
-from customproviders.serviceBandwith import BandwithProvider
-from customproviders.serialNumber import SerialNumbers
-from customproviders.documentNumber import DocumentNumbers
-from data.customData import CustomValues
-from utils import random_generator, calculateSubnet
-from utils import fileFactory
-from datafiles import networkDiscovery
+
+from src.customproviders.serviceTag import TagsProvider
+from src.customproviders.serviceBandwidth import BandwidthProvider
+from src.customproviders.serialNumber import SerialNumbers
+from src.customproviders.documentNumber import DocumentNumbers
+from src.data.customData import CustomValues
+from src.my_project_utils import random_generator, calculateSubnet
+from src.my_project_utils import fileFactory
+from src.datafiles import networkDiscovery
 
 
 class FileGeneration:
 
-    def file_generator_iterations(self, number_of_networks):
+    @staticmethod
+    def file_generator_iterations(number_of_networks):
 
         fake = Faker('en_GB')
 
         # Add the dataProviders to our faker object
         fake.add_provider(TagsProvider)
-        fake.add_provider(BandwithProvider)
+        fake.add_provider(BandwidthProvider)
         fake.add_provider(SerialNumbers)
         fake.add_provider(CustomValues)
         fake.add_provider(DocumentNumbers)
@@ -64,26 +65,25 @@ class FileGeneration:
         network_discovery_file = ff.open_file("networkDiscoveryFile.rdf")
         network_discovery_file.write(ndf.networkdiscoveryentries())
 
-        dataObj1 = ""
-
         for line in fake.equipment_list():
             equipment_writer.writerow(line)
         ff.close_file(equipment_file)
 
         for _i in range(number_of_networks):
-            print("Printing network number ", (_i + 1), " of ", number_of_networks)
-
             # address_class is of type b or c because type a takes too long.
-            # change to address_class=fake.ipv4_network_class() to have options a,b or c available
+            # address_class=fake.ipv4_network_class() to have options a,b or c available
+            # change to address_class=rn.random_b_or_c() for smaller networks of type b or c
 
             flag = True
             while flag:
-                ip_address_with_mask = fake.ipv4_public(network=True, address_class=fake.ipv4_network_class())
+                ip_address_with_mask = fake.ipv4_public(network=True, address_class=rn.random_b_or_c())
                 ip_addresses = subnet.generate_ip_addresses_for_fake_network(ip_address_with_mask)
-                # make sure that there are less than 1000 ips in the network
-                if len(ip_addresses) < 1000:
+
+                # make sure that there are less than X ips in the network
+                if subnet.max_number_of_hosts(ip_address_with_mask) < 1000:
                     flag = False
 
+            print("Printing network number ", (_i + 1), " of ", number_of_networks)
             subnet_mask = subnet.get_subnet_mask_from_ip(ip_address_with_mask)
             m_subnet = subnet.binary_value_to_decimal(subnet.subnet_value_in_binary(ip_address_with_mask))
             equipment_on_site_obj_id = 1
@@ -152,7 +152,6 @@ class FileGeneration:
                 )
                 account_file.flush()
 
-                timestamp = (str(int(time.time())))
                 network_discovery_file.write(ndf.networkdiscoveryobj2(name, str(object2_id), str(assoc_index_number),
                                                                       str(if_admin_status),
                                                                       str(if_oper_status), str(if_index), entity_oid,
@@ -168,13 +167,10 @@ class FileGeneration:
                 if_number += 1
                 if_index += 1
 
-            timestamp = str(int(time.time()))
-            # print("...still working..." + timestamp)
             network_discovery_file.write(ndf.networddiscoveryobj1(object_1_id, name, str(assoc_index_number_for_obj1),
                                                                   str(if_oper_status_for_obj1), str(if_index_for_obj1),
                                                                   entity_oid) + "\n")
 
-            # network_discovery_file.write(dataObj1 + "\n")
             network_discovery_file.flush()
 
         ff.close_file(network_discovery_file, equipment_on_site_file, account_file, customer_file, service_file)

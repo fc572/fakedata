@@ -4,7 +4,8 @@ import csv
 
 class FileFactory:
 
-    def open_file(self, file_name):
+    @staticmethod
+    def open_file(file_name):
         dir_name = os.path.join(os.path.expanduser('~'), 'Documents/fc_project_data/')
 
         path_to_file = os.path.join(dir_name + file_name)
@@ -14,7 +15,8 @@ class FileFactory:
 
         return open(path_to_file, 'a', newline='')
 
-    def writer(self, file):
+    @staticmethod
+    def writer(file):
         return csv.writer(file)
 
     def write_file_headers(self, file, file_headers):
@@ -22,7 +24,8 @@ class FileFactory:
         writer.writerow(file_headers)
         return writer
 
-    def close_file(self, *argv):
+    @staticmethod
+    def close_file(*argv):
         for file in argv:
             file.close()
 

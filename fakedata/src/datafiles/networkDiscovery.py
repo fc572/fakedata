@@ -1,5 +1,6 @@
 class CreateTextContent:
-    def networkdiscoveryentries(self):
+    @staticmethod
+    def networkdiscoveryentries():
         return (
             "\n @prefix : <http://ontology.com/queryResultViewExport#> . \
              \n@base <http://ontology.com/queryResultViewExport> .\
@@ -55,8 +56,8 @@ class CreateTextContent:
                 \nrdfs:domain network_discovery:MIfOperStatus."
         )
 
+    @staticmethod
     def networddiscoveryobj1(
-            self,
             object_1_id,
             name,
             assoc_index_number_for_obj1,
@@ -65,7 +66,7 @@ class CreateTextContent:
             entity_oid,
     ):
         return (
-              "\n[] a network_discovery:Entity ; \
+                "\n[] a network_discovery:Entity ; \
               \nrdfs:label \"Entity "
                 + object_1_id
                 + "; "
@@ -108,8 +109,8 @@ class CreateTextContent:
                 + "\"  . \
         ")
 
+    @staticmethod
     def networkdiscoveryobj2(
-            self,
             name,
             object2_id,
             assoc_index_number,

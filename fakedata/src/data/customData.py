@@ -6,7 +6,8 @@ from faker.providers import BaseProvider
 # Our custom provider inherits from the BaseProvider
 class CustomValues(BaseProvider):
 
-    def custom_list(self, word_list, sentence_length):
+    @staticmethod
+    def custom_list(word_list, sentence_length):
         data_dictionary = {
                               "fake_site_name": ["Residential", "Business", ""],
                               "fake_service_name": ["12Mbps Business Plus", "1Mbps Value", "2Mbps Value",
@@ -34,7 +35,8 @@ class CustomValues(BaseProvider):
         }
         return ''.join(random.sample(data_dictionary[word_list], sentence_length))
 
-    def equipment_list(self, sentence_length=0, pos=-1):
+    @staticmethod
+    def equipment_list(sentence_length=0, pos=-1):
         fake_equipment_list = [['1', 'Baltic 125R', '6', '100', '1', '4'],
                                ['2', 'Baltic 800', '88', '150', '2', '4'],
                                ['3', 'Baltic 8002', '168', '150', '3', '4'],

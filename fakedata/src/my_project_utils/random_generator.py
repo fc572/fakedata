@@ -2,24 +2,30 @@ import random
 
 numeric_sample = '0123456789'
 
+
 class RandomCustom:
 
-    def random_seed(self, seed):
+    @staticmethod
+    def random_seed(seed):
         random.seed(seed)
 
-    def random_number(self, number_length):
+    @staticmethod
+    def random_number(number_length):
         digits_sample = '0123456789'
         return ''.join(random.sample(digits_sample, number_length))
 
-    def random_letter(self, number_length):
+    @staticmethod
+    def random_letter(number_length):
         chars_sample = 'ABCDEFGJIKLMNOPQRSTUVWXYZ'
         return ''.join(random.sample(chars_sample, number_length))
 
-    def random_b_or_c(self):
+    @staticmethod
+    def random_b_or_c():
         chars_sample = 'bc'
         return ''.join(random.sample(chars_sample, 1))
 
-    def random_range(self, start, end, step=1):
+    @staticmethod
+    def random_range(start, end, step=1):
         return random.randrange(start, end, step)
 
     # the lower the seed value, the less are the True returned
